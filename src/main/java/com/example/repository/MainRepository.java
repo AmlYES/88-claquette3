@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Primary
