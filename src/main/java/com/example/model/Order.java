@@ -22,7 +22,9 @@ public class Order {
         this.products = products;
     }
 
+    // Constructor without id (id will be generated automatically)
     public Order(UUID userId, double totalPrice, List<Product> products) {
+        this.id = UUID.randomUUID();
         this.userId = userId;
         this.totalPrice = totalPrice;
         this.products = products;

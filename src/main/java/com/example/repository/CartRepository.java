@@ -21,6 +21,7 @@ public class CartRepository extends MainRepository<Cart> {
     }
 
     public Cart addCart(Cart cart){
+        cart.setId(UUID.randomUUID());
         save(cart);
         return cart;
     }
@@ -68,11 +69,13 @@ public class CartRepository extends MainRepository<Cart> {
     }
     public void deleteCartById(UUID cartId){
         ArrayList<Cart> carts= findAll();
-        for(Cart cart: carts){
-            if(cart.getId().equals(cartId)){
-                carts.remove(cart);
-            }
-        }
+//        for(Cart cart: carts){
+//            if(cart.getId().equals(cartId)){
+//                carts.remove(cart);
+//                break;
+//            }
+//        }
+        carts.removeIf(cart -> cart.getId().equals(cartId));
         saveAll(carts);
     }
 }

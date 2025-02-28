@@ -18,7 +18,9 @@ public class Product {
         this.price = price;
     }
 
+    // Constructor without id (id will be generated automatically)
     public Product(String name, double price){
+        this.id = UUID.randomUUID();
         this.name = name;
         this.price = price;
     }
@@ -48,5 +50,12 @@ public class Product {
         this.price = price;
     }
 
-
+    @Override
+    public String toString() {
+        return "\n Product { " +
+                "ID: " + id +
+                ", Name: " + name +
+                ", Price: " + price +
+                " }\n";
+    }
 }

@@ -19,7 +19,9 @@ public class User {
         this.orders = orders;
     }
 
+    // Constructor without id (id will be generated automatically)
     public User(String name, List<Order> orders) {
+        this.id = UUID.randomUUID();
         this.name = name;
         this.orders=orders;
     }

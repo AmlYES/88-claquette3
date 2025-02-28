@@ -43,15 +43,31 @@ public class CartController {
 
     @DeleteMapping("/delete/{cartId}")
     public String deleteCartById(@PathVariable UUID cartId){
+        Cart cart = cartService.getCartById(cartId);
+
+        if(cart == null){
+            return "Cart with ID " + cartId + " was not found";
+        }
+
         cartService.deleteCartById(cartId);
-        return "Cart deleted";
+
+        return "The Following Cart Was Deleted Successfully: \n"
+                + "ID: " + cart.getId() + "\n"
+                + "User: " + cart.getUserId() + "\n"
+                + "Products: \n" + cart.getProducts();
     }
 
     //cart and product dependent
     @PutMapping("/addProduct/{cartId}")
     public String addProductToCart(@PathVariable UUID cartId, @RequestBody Product product){
+        Cart cart = cartService.getCartById(cartId);
+
+        StringBuilder response = new StringBuilder("\nCart before adding the product:\n" + cart);
         cartService.addProductToCart(cartId,product);
-        return "Product added to Cart";
+        cart = cartService.getCartById(cartId);
+        response.append("\nCart after adding the product:\n" + cart);
+
+        return "Product: " + product + " was added successfully \n" + response;
     }
 
 }

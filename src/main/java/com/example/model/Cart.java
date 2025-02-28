@@ -14,7 +14,9 @@ public class Cart {
 
     }
 
+    // Constructor without id (id will be generated automatically)
     public Cart(UUID userId, List<Product> products) {
+        this.id = UUID.randomUUID();
         this.userId=userId;
         this.products=products;
 
@@ -47,5 +49,13 @@ public class Cart {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    @Override
+    public String toString() {
+        return "Cart:\n" +
+                "ID: " + id + "\n" +
+                "User: " + userId + "\n" +
+                "Products: " + (products.isEmpty() ? "None" : products) + "\n";
     }
 }

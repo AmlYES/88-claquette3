@@ -25,6 +25,7 @@ public class ProductRepository extends MainRepository<Product> {
     //----- Required Methods -----//
 
     public Product addProduct(Product product) {
+        product.setId(UUID.randomUUID());
         save(product);
         return product;
     }
@@ -67,11 +68,12 @@ public class ProductRepository extends MainRepository<Product> {
 
     public void deleteProductById(UUID productId) {
         ArrayList<Product> products = findAll();
-        for(Product product: products){
-            if(productId.equals(product.getId())){
-                products.remove(product);
-            }
-        }
+//        for(Product product: products){
+//            if(productId.equals(product.getId())){
+//                products.remove(product);
+//            }
+//        }
+        products.removeIf(product -> product.getId().equals(productId));
         saveAll(products);
     }
 }
