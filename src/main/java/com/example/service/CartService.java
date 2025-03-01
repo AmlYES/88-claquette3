@@ -38,7 +38,9 @@ public class CartService extends MainService<Cart>{
          cartRepository.deleteCartById(cartId);
     }
 
-
+    public void emptyCart(UUID userId) {
+        cartRepository.emptyCart(userId);
+    }
 //The Dependency Injection Variables
 //The Constructor with the required variables mapping the Dependency Injection.
 }
