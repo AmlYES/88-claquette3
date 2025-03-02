@@ -53,7 +53,7 @@ public class ProductController {
     public String applyDiscount(@RequestParam double discount,@RequestBody ArrayList<UUID> productIds){
         productService.applyDiscount(discount, productIds);
 
-        StringBuilder response = new StringBuilder("Discount of " + discount + "% applied to the following products:\n");
+        StringBuilder response = new StringBuilder("Discount applied successfully\n");
         for (UUID id : productIds) {
             Product product = productService.getProductById(id); // Fetch updated product
             if (product != null) {
@@ -77,10 +77,7 @@ public class ProductController {
 
         productService.deleteProductById(productId);
 
-        return "The Following Product Was Deleted Successfully: \n"
-                + "ID: " + product.getId() + "\n"
-                + "Name: " + product.getName() + "\n"
-                + "Price: " + product.getPrice();
+        return "Product deleted successfully\n";
     }
 
 }
