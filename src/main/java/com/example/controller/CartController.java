@@ -62,6 +62,9 @@ public class CartController {
     public String addProductToCart(@PathVariable UUID cartId, @RequestBody Product product){
         Cart cart = cartService.getCartById(cartId);
 
+        if(cart == null){
+            return "Cart with ID " + cartId + " was not found";
+        }
         StringBuilder response = new StringBuilder("\nCart before adding the product:\n" + cart);
         cartService.addProductToCart(cartId,product);
         cart = cartService.getCartById(cartId);
