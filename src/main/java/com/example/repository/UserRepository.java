@@ -24,6 +24,9 @@ public class UserRepository extends MainRepository<User> {
 
     public User addUser(User user) {
         user.setId(UUID.randomUUID());
+//        if(user.getOrders()==null){
+//            user.setOrders(new ArrayList<>());
+//        }
         save(user);
         return user;
     }

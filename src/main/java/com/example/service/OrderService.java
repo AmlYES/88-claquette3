@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.model.Order;
 import com.example.repository.OrderRepository;
+import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +14,13 @@ import java.util.UUID;
 public class OrderService extends MainService<Order> {
     // The Dependency Injection Variables
     OrderRepository orderRepository;
+    UserRepository userRepository;
 
     // The Constructor with the required variables mapping the Dependency Injection.
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository) {
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
     }
 
     public void addOrder(Order order) {
@@ -38,5 +41,6 @@ public class OrderService extends MainService<Order> {
             throw new IllegalArgumentException("Order with ID " + orderId + " not found.");
         }
         orderRepository.deleteOrderById(orderId);
+        userRepository.removeOrderFromUser(order.getUserId(), orderId);
     }
 }

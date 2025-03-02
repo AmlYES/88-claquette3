@@ -14,6 +14,10 @@ public class Cart {
 
     }
 
+    public Cart(UUID userId) {
+        this.userId = userId;
+        this.id = UUID.randomUUID();
+    }
     // Constructor without id (id will be generated automatically)
     public Cart(UUID userId, List<Product> products) {
         this.id = UUID.randomUUID();

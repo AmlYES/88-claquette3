@@ -17,15 +17,20 @@ public class UserService extends MainService<User> {
 
     private final UserRepository userRepository;
     private final CartService cartService;
+    private final OrderService orderService;
 
     @Autowired
-    public UserService(UserRepository userRepository, CartService cartService) {
+    public UserService(UserRepository userRepository, CartService cartService , OrderService orderService) {
         this.userRepository = userRepository;
         this.cartService = cartService;
+        this.orderService = orderService;
     }
 
     public User addUser(User user) {
-        return userRepository.addUser(user);
+        User savedUser = userRepository.addUser(user);
+        Cart newCart = new Cart(savedUser.getId());
+        cartService.addCart(newCart);
+        return savedUser;
     }
 
     public ArrayList<User> getUsers() {
@@ -51,7 +56,7 @@ public class UserService extends MainService<User> {
         // Step 3: Create a new order
 
         Order newOrder = new Order(UUID.randomUUID(), userId, totalPrice, new ArrayList<>(cart.getProducts()));
-        //orderService.addOrder(Order order);
+        orderService.addOrder(newOrder);
         // Step 4: Add the new order to the user's order list
         userRepository.addOrderToUser(userId, newOrder);
 
@@ -64,9 +69,23 @@ public class UserService extends MainService<User> {
 
     public void removeOrderFromUser(UUID userId, UUID orderId) {
         userRepository.removeOrderFromUser(userId, orderId);
+        orderService.deleteOrderById(orderId);
     }
 
     public void deleteUserById(UUID userId) {
+        // Delete the cart linked to this user (if exists)
+        Cart cart = cartService.getCartByUserId(userId);
+        if (cart != null) {
+            cartService.deleteCartById(cart.getId());
+        }
+        // Delete all orders linked to this user
+        List<Order> orders = getOrdersByUserId(userId);
+        if (!orders.isEmpty()) {
+            for (Order order : orders) {
+                orderService.deleteOrderById(order.getId());
+            }
+        }
+
         userRepository.deleteUserById(userId);
     }
 }
