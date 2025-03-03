@@ -56,12 +56,14 @@ public class CartRepository extends MainRepository<Cart> {
         for(Cart cart: carts){
             if(cart.getId().equals(cartId)){
                 cart.getProducts().add(product);
-                break;
+                saveAll(carts);
+                return;
             }
         }
         Cart cart  = new Cart();
         cart.setId(cartId);
         cart.getProducts().add(product);
+        carts.add(cart);
         saveAll(carts);
     }
 
@@ -69,12 +71,6 @@ public class CartRepository extends MainRepository<Cart> {
     public void deleteProductFromCart(UUID cartId, Product product){
         ArrayList<Cart> carts = findAll();
         for(Cart cart: carts){
-//            if(cart.getId().equals(cartId)){
-//                cart.getProducts().remove(product);
-//            }
-            //cart.getProducts().removeIf(p -> p.getId().equals(product.getId())); //removes all instances of the product in that cart
-
-            // to remove only the first occurrence of the product in the cart
             List<Product> products = cart.getProducts();
             Iterator<Product> iterator = products.iterator();
             while (iterator.hasNext()) {
