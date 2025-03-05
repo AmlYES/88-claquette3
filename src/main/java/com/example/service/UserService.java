@@ -46,23 +46,28 @@ public class UserService extends MainService<User> {
     }
 
     public void addOrderToUser(UUID userId) {
-        // Step 1: Get the user's cart
         Cart cart = cartService.getCartByUserId(userId);
         if (cart == null || cart.getProducts().isEmpty()) {
             throw new IllegalStateException("Cart is empty. Cannot place order.");
         }
-        // Step 2: Calculate total price
+
         double totalPrice = cart.getProducts().stream().mapToDouble(Product::getPrice).sum();
-        // Step 3: Create a new order
 
         Order newOrder = new Order(UUID.randomUUID(), userId, totalPrice, new ArrayList<>(cart.getProducts()));
+
+        System.out.println("New Order Created: " + newOrder);
+
         orderService.addOrder(newOrder);
-        // Step 4: Add the new order to the user's order list
+
+        System.out.println("Order should be saved now. Checking userRepository...");
+
         userRepository.addOrderToUser(userId, newOrder);
 
-        // Step 5: Empty the user's cart
+        System.out.println("Order added to user successfully!");
+
         emptyCart(userId);
     }
+
     public void emptyCart(UUID userId) {
         cartService.emptyCart(userId);
     }
