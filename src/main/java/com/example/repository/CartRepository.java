@@ -23,7 +23,10 @@ public class CartRepository extends MainRepository<Cart> {
     }
 
     public Cart addCart(Cart cart){
-        cart.setId(UUID.randomUUID());
+        if(cart.getId()==null) {
+           cart.setId(UUID.randomUUID());
+        }
+
         save(cart);
         return cart;
     }
@@ -55,16 +58,13 @@ public class CartRepository extends MainRepository<Cart> {
         ArrayList<Cart> carts= findAll();
         for(Cart cart: carts){
             if(cart.getId().equals(cartId)){
-                cart.getProducts().add(product);
-                saveAll(carts);
-                return;
+                List<Product> products= cart.getProducts();
+                products.add(product);
+                cart.setProducts(products);
+                save(cart);
+                break;
             }
         }
-//        Cart cart  = new Cart();
-//        cart.setId(cartId);
-//        cart.getProducts().add(product);
-//        carts.add(cart);
-//        saveAll(carts);
     }
 
 
