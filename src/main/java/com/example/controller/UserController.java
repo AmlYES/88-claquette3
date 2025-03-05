@@ -119,7 +119,8 @@ public class UserController {
         Cart cart = cartService.getCartByUserId(userId);
 
         if (cart == null) {
-            return "Cart is empty";
+            cart = new Cart(userId);
+            cartService.addCart(cart);
         }
 
         Product product = productService.getProductById(productId);
@@ -138,8 +139,8 @@ public class UserController {
         //assuming each user has one cart
         Cart cart = cartService.getCartByUserId(userId);
 
-        if (cart == null) {
-            return "User with ID " + userId + " does not have a cart.";
+        if (cart == null || cart.getProducts().isEmpty()) {
+            return "Cart is empty";
         }
 
         Product product = productService.getProductById(productId);
@@ -151,6 +152,7 @@ public class UserController {
         cartService.deleteProductFromCart(cart.getId(), product);
         cart = cartService.getCartByUserId(userId); //get the cart after adding the product
         response.append("\nCart after deleting the product:\n" + cart);
+
         return "Product deleted from cart";
 
     }

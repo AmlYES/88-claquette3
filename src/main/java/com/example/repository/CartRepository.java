@@ -23,7 +23,9 @@ public class CartRepository extends MainRepository<Cart> {
     }
 
     public Cart addCart(Cart cart){
-        cart.setId(UUID.randomUUID());
+        if (cart.getId() == null) {
+            cart.setId(UUID.randomUUID());
+        }
         save(cart);
         return cart;
     }
