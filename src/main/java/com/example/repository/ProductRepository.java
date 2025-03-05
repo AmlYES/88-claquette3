@@ -25,7 +25,7 @@ public class ProductRepository extends MainRepository<Product> {
     //----- Required Methods -----//
 
     public Product addProduct(Product product) {
-        if(product.getId()!=null) {
+        if(product.getId()==null) {
             product.setId(UUID.randomUUID());
         }
         save(product);
