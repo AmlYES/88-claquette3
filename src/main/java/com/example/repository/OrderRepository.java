@@ -24,13 +24,11 @@ public class OrderRepository extends MainRepository<Order> {
     }
 
     public void addOrder(Order order) {
-        if (order.getId() == null) {
+        if(order.getId()==null){
             order.setId(UUID.randomUUID());
         }
-        System.out.println("Saving Order: " + order);
         save(order);
     }
-
 
     public ArrayList<Order> getOrders() {
         return findAll();

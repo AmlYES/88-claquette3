@@ -13,15 +13,16 @@ import java.util.UUID;
 @SuppressWarnings("rawtypes")
 public class OrderService extends MainService<Order> {
     // The Dependency Injection Variables
+    @Autowired
     OrderRepository orderRepository;
+    @Autowired
     UserRepository userRepository;
 
-    // The Constructor with the required variables mapping the Dependency Injection.
-    @Autowired
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository) {
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
-    }
+    // The Constructor with the required variables mapping the Dependency Injection
+//    public OrderService(OrderRepository orderRepository, UserRepository userRepository) {
+//        this.orderRepository = orderRepository;
+//        this.userRepository = userRepository;
+//    }
 
     public void addOrder(Order order) {
         orderRepository.addOrder(order);

@@ -51,7 +51,7 @@ public class CartController {
 
         cartService.deleteCartById(cartId);
 
-        return "Cart deleted successfully>\n";
+        return "Cart deleted successfully";
     }
 
     //cart and product dependent
