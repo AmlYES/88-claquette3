@@ -46,7 +46,7 @@ public class OrderController {
             return "Order not found";
         }
         orderService.deleteOrderById(orderId);
-        return "Order deleted";
+        return "Order deleted successfully";
     }
 
 

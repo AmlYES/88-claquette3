@@ -53,18 +53,18 @@ public class ProductController {
     public String applyDiscount(@RequestParam double discount,@RequestBody ArrayList<UUID> productIds){
         productService.applyDiscount(discount, productIds);
 
-        StringBuilder response = new StringBuilder("Discount of " + discount + "% applied to the following products:\n");
-        for (UUID id : productIds) {
-            Product product = productService.getProductById(id); // Fetch updated product
-            if (product != null) {
-                response.append("- ").append(product.getName())
-                        .append(" (New Price: ").append(product.getPrice()).append(")\n");
-            } else {
-                response.append("- Product with ID ").append(id).append(" not found.\n");
-            }
-        }
+//        StringBuilder response = new StringBuilder("Discount applied successfully");
+//        for (UUID id : productIds) {
+//            Product product = productService.getProductById(id); // Fetch updated product
+//            if (product != null) {
+//                response.append("- ").append(product.getName())
+//                        .append(" (New Price: ").append(product.getPrice()).append(")\n");
+//            } else {
+//                response.append("- Product with ID ").append(id).append(" not found.\n");
+//            }
+//        }
 
-        return response.toString();
+        return "Discount applied successfully";
     }
 
     @DeleteMapping("/delete/{productId}")
@@ -77,10 +77,7 @@ public class ProductController {
 
         productService.deleteProductById(productId);
 
-        return "The Following Product Was Deleted Successfully: \n"
-                + "ID: " + product.getId() + "\n"
-                + "Name: " + product.getName() + "\n"
-                + "Price: " + product.getPrice();
+        return "Product deleted successfully";
     }
 
 }

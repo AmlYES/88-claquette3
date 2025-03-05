@@ -23,7 +23,10 @@ public class CartRepository extends MainRepository<Cart> {
     }
 
     public Cart addCart(Cart cart){
-        cart.setId(UUID.randomUUID());
+        if(cart.getId()==null) {
+           cart.setId(UUID.randomUUID());
+        }
+
         save(cart);
         return cart;
     }
@@ -55,31 +58,30 @@ public class CartRepository extends MainRepository<Cart> {
         ArrayList<Cart> carts= findAll();
         for(Cart cart: carts){
             if(cart.getId().equals(cartId)){
-                cart.getProducts().add(product);
+                List<Product> products= cart.getProducts();
+                products.add(product);
+                cart.setProducts(products);
+                save(cart);
+                break;
             }
         }
-        saveAll(carts);
     }
-    public void deleteProductFromCart(UUID cartId, Product product){
-        ArrayList<Cart> carts = findAll();
-        for(Cart cart: carts){
-//            if(cart.getId().equals(cartId)){
-//                cart.getProducts().remove(product);
-//            }
-            //cart.getProducts().removeIf(p -> p.getId().equals(product.getId())); //removes all instances of the product in that cart
 
-            // to remove only the first occurrence of the product in the cart
-            List<Product> products = cart.getProducts();
-            Iterator<Product> iterator = products.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().getId().equals(product.getId())) {
-                    iterator.remove();
-                    break;
-                }
+
+    public void deleteProductFromCart(UUID cartId, Product product) {
+        ArrayList<Cart> carts = findAll();
+
+        for (Cart cart : carts) {
+            if (cart.getId().equals(cartId)) { // Only process the matching cart
+                List<Product> products = cart.getProducts();
+                products.removeIf(p -> p.getId().equals(product.getId())); // Remove product
+                break; // Stop after finding the correct cart
             }
         }
+
         saveAll(carts);
     }
+
     public void deleteCartById(UUID cartId){
         ArrayList<Cart> carts= findAll();
 //        for(Cart cart: carts){

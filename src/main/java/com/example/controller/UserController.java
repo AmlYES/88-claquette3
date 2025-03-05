@@ -51,14 +51,12 @@ public class UserController {
         User user = userService.getUserById(userId); // Fetch deleted user
 
         if (user == null) {
-            return "User with ID " + userId + " not found.";
+            return "User not found";
         }
 
         userService.deleteUserById(userId);
 
-        return "The Following User Was Deleted Successfully: \n"
-                + "ID: " + user.getId() + "\n"
-                + "Name: " + user.getName();
+        return "User deleted successfully";
     }
 
     //user and order
@@ -80,7 +78,7 @@ public class UserController {
             return "User with ID " + userId + " not found.";
         }
         userService.addOrderToUser(userId);
-        return "Order Placed Successfully: \n";
+        return "Order added successfully";
     }
 
     @PostMapping("/{userId}/removeOrder")
@@ -99,7 +97,7 @@ public class UserController {
         }
 
         userService.removeOrderFromUser(userId, orderId);
-        return "Order with ID " + orderId + " was removed successfully from user " + userId;
+        return "Order removed successfully";
     }
 
     //user and cart
@@ -107,10 +105,10 @@ public class UserController {
     public String emptyCart(@PathVariable UUID userId){
         User user = userService.getUserById(userId);
         if (user == null) {
-            return "User with ID " + userId + " not found.";
+            return "User not found";
         }
         userService.emptyCart(userId);
-        return "Cart is cleared successfully: \n" + cartService.getCartByUserId(userId);
+        return "Cart emptied successfully";
     }
 
     //user, product and cart (mesh mawgodeen fe userservice)
@@ -121,7 +119,7 @@ public class UserController {
         Cart cart = cartService.getCartByUserId(userId);
 
         if (cart == null) {
-            return "User with ID " + userId + " does not have a cart.";
+            return "Cart is empty";
         }
 
         Product product = productService.getProductById(productId);
@@ -131,7 +129,7 @@ public class UserController {
 
         cartService.addProductToCart(cart.getId(), product);
         cart = cartService.getCartByUserId(userId); //get the cart after adding the product
-        return "Product " + product + " added to cart " + cart;
+        return "Product added to cart";
     }
 
 
@@ -153,7 +151,7 @@ public class UserController {
         cartService.deleteProductFromCart(cart.getId(), product);
         cart = cartService.getCartByUserId(userId); //get the cart after adding the product
         response.append("\nCart after deleting the product:\n" + cart);
-        return "Product " + product + " deleted from cart successfully " + response;
+        return "Product deleted from cart";
 
     }
 

@@ -51,10 +51,7 @@ public class CartController {
 
         cartService.deleteCartById(cartId);
 
-        return "The Following Cart Was Deleted Successfully: \n"
-                + "ID: " + cart.getId() + "\n"
-                + "User: " + cart.getUserId() + "\n"
-                + "Products: \n" + cart.getProducts();
+        return "Cart deleted successfully";
     }
 
     //cart and product dependent
