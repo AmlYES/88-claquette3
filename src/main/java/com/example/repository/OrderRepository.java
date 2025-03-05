@@ -24,7 +24,9 @@ public class OrderRepository extends MainRepository<Order> {
     }
 
     public void addOrder(Order order) {
-        order.setId(UUID.randomUUID());
+        if(order.getId()==null){
+            order.setId(UUID.randomUUID());
+        }
         save(order);
     }
 
