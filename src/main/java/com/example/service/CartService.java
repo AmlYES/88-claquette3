@@ -15,6 +15,10 @@ public class CartService extends MainService<Cart>{
     @Autowired
     CartRepository cartRepository;
 
+    public CartService(CartRepository cartRepository) {
+        super();
+    }
+
     public Cart addCart(Cart cart){
         return cartRepository.addCart(cart);
     }

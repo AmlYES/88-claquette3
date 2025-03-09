@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class OrderServiceTests {
+class OrderTests {
 
     @Autowired
     private OrderService orderService;

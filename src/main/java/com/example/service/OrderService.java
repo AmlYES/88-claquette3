@@ -18,6 +18,10 @@ public class OrderService extends MainService<Order> {
     @Autowired
     UserRepository userRepository;
 
+    public OrderService(OrderRepository orderRepository) {
+        super();
+    }
+
     // The Constructor with the required variables mapping the Dependency Injection
 //    public OrderService(OrderRepository orderRepository, UserRepository userRepository) {
 //        this.orderRepository = orderRepository;
