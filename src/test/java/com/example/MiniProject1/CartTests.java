@@ -248,21 +248,21 @@ public class CartTests {
     }
 
     @Test
-    void addProductToCart_shouldUpdateCartTotalPrice() {
+    void addProductToCart_shouldNotAddNullProduct() {
         // Arrange
         Product product1 = new Product("pen", 10.0);
-        Product product2 = new Product("notebook", 20.0);
         Cart cart = new Cart(UUID.randomUUID());
         cartService.addCart(cart);
 
         // Act
         cartService.addProductToCart(cart.getId(), product1);
-        cartService.addProductToCart(cart.getId(), product2);
+        cartService.addProductToCart(cart.getId(), null); // Attempt to add a null product
         Cart retrievedCart = cartService.getCartById(cart.getId());
-        double totalPrice = retrievedCart.getProducts().stream().mapToDouble(Product::getPrice).sum();
+        List<Product> productsRetrieved = retrievedCart.getProducts();
 
         // Assert
-        assertEquals(30.0, totalPrice, 0.001, "The total price of the cart should be updated correctly.");
+        assertEquals(1, productsRetrieved.size(), "Null products should not be added to the cart.");
+        assertTrue(productsRetrieved.contains(product1), "The cart should only contain valid products.");
     }
 
 
