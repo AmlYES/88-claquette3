@@ -34,6 +34,8 @@ public class CartService extends MainService<Cart>{
     }
     public void addProductToCart(UUID cartId, Product product){
          cartRepository.addProductToCart(cartId,product);
+        System.out.println(" cart products" + cartRepository.getCartById(cartId).toString());
+
     }
     public void deleteProductFromCart(UUID cartId, Product product){
          cartRepository.deleteProductFromCart(cartId,product);

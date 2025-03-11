@@ -19,21 +19,28 @@ public class UserService extends MainService<User> {
     private final UserRepository userRepository;
     private final CartService cartService;
     private final OrderService orderService;
+    private final Cart cart;
 
     @Autowired
-    public UserService(UserRepository userRepository, CartService cartService , OrderService orderService) {
+    public UserService(UserRepository userRepository, CartService cartService , OrderService orderService, Cart cart) {
         this.userRepository = userRepository;
         this.cartService = cartService;
         this.orderService = orderService;
+        this.cart = cart;
     }
 
     public User addUser(User user) {
         if (user == null) {
             throw new IllegalArgumentException("User entered cannot  be null");
         }
+        if (userRepository.getUserById(user.getId()) != null) {
+            throw new IllegalStateException("User with ID " + user.getId() + " already exists.");
+        }
+
         User savedUser = userRepository.addUser(user);
         Cart newCart = new Cart(savedUser.getId());
         cartService.addCart(newCart);
+        System.out.println("Added cart " + savedUser.getId() + " to the cart" + newCart.getId());
         return savedUser;
     }
 
@@ -72,8 +79,11 @@ public class UserService extends MainService<User> {
             throw new NoSuchElementException("User not found");
         }
         Cart cart = cartService.getCartByUserId(userId);
-
-        if (cart == null || cart.getProducts().isEmpty()) {
+        if (cart == null ) {
+            throw new IllegalStateException("no cart");
+        }
+        if ( cart.getProducts().isEmpty()) {
+            System.out.println(" really no cart");
             throw new IllegalStateException("Cart is empty. Cannot place order.");
         }
 
