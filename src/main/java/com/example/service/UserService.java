@@ -47,7 +47,7 @@ public class UserService extends MainService<User> {
         }
         User user = userRepository.getUserById(userId);
         if (user == null) {
-            throw new NoSuchElementException("User with ID " + userId + " not found.");
+            throw new NoSuchElementException("User not found");
         }
         return user;
     }

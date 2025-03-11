@@ -29,7 +29,7 @@ public class ProductController {
         try {
             return productService.addProduct(product);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid product data: " + e.getMessage());
+            return null;
         }
     }
 
@@ -37,10 +37,8 @@ public class ProductController {
     public Product getProductById(@PathVariable UUID productId) {
         try {
             return productService.getProductById(productId);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid product ID: " + e.getMessage());
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Product not found: " + e.getMessage());
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return  null;
         }
     }
 
@@ -58,10 +56,8 @@ public class ProductController {
             double newPrice = body.containsKey("newPrice") ? Double.parseDouble(body.get("newPrice").toString()) : existingProduct.getPrice();
 
             return productService.updateProduct(productId, newName, newPrice);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid update data: " + e.getMessage());
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Product not found: " + e.getMessage());
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return null;
         }
     }
 
@@ -71,7 +67,7 @@ public class ProductController {
             productService.applyDiscount(discount, productIds);
             return "Discount applied successfully";
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid discount request: " + e.getMessage());
+            return "Invalid discount request: " + e.getMessage();
         }
     }
 //    public String applyDiscount(@RequestParam double discount,@RequestBody ArrayList<UUID> productIds){
@@ -98,9 +94,9 @@ public class ProductController {
             productService.deleteProductById(productId);
             return "Product deleted successfully";
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid product ID: " + e.getMessage());
+            return ("Invalid product ID: " + e.getMessage());
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Product not found: " + e.getMessage());
+            return ("Product not found: " + e.getMessage());
         }
     }
 }

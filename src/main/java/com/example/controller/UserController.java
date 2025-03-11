@@ -37,7 +37,7 @@ import java.util.UUID;
         try {
             return userService.addUser(user);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid user data: " + e.getMessage());
+            return null;
         }
     }
 
@@ -50,10 +50,8 @@ import java.util.UUID;
     public User getUserById(@PathVariable UUID userId) {
         try {
             return userService.getUserById(userId);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid user ID: " + e.getMessage());
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("User not found: " + e.getMessage());
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return null;
         }
     }
 
@@ -63,10 +61,8 @@ import java.util.UUID;
             userService.getUserById(userId); // Ensure user exists before deleting
             userService.deleteUserById(userId);
             return "User deleted successfully";
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid user ID: " + e.getMessage());
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException( e.getMessage());
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return ( e.getMessage());
         }
     }
 
@@ -75,10 +71,8 @@ import java.util.UUID;
     public List<Order> getOrdersByUserId(@PathVariable UUID userId) {
         try {
             return userService.getOrdersByUserId(userId);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid user ID: " + e.getMessage());
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("User not found: " + e.getMessage());
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return null;
         }
     }
 
@@ -89,10 +83,8 @@ import java.util.UUID;
             return "Order added successfully";
         } catch (IllegalArgumentException e) {
             return "Invalid user ID: " + e.getMessage();
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException | IllegalStateException e) {
             return e.getMessage();
-        } catch (IllegalStateException e) {
-            return "Cannot place order: " + e.getMessage();
         }
     }
 
@@ -101,9 +93,7 @@ import java.util.UUID;
         try {
             userService.removeOrderFromUser(userId, orderId);
             return "Order removed successfully";
-        } catch (IllegalArgumentException e) {
-            return "Invalid input: " + e.getMessage();
-        } catch (NoSuchElementException e) {
+        } catch (IllegalArgumentException | NoSuchElementException e) {
             return e.getMessage();
         }
     }
@@ -114,58 +104,100 @@ import java.util.UUID;
         try {
             userService.emptyCart(userId);
             return "Cart emptied successfully";
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return  e.getMessage();
+        }
+    }
+
+//    //user, product and cart (mesh mawgodeen fe userservice)
+//    @PutMapping("/addProductToCart")
+//    public String addProductToCart(@RequestParam UUID userId, @RequestParam UUID productId){
+//
+//        //assuming each user has one cart
+//        Cart cart = cartService.getCartByUserId(userId);
+//
+//        if (cart == null) {
+//            cart = new Cart(userId);
+//            cartService.addCart(cart);
+//        }
+//
+//        Product product = productService.getProductById(productId);
+//        if (product == null) {
+//            return "Product with ID " + productId + " not found.";
+//        }
+//
+//        cartService.addProductToCart(cart.getId(), product);
+//        cart = cartService.getCartByUserId(userId); //get the cart after adding the product
+//        return "Product added to cart";
+//    }
+//
+//
+//    @PutMapping("/deleteProductFromCart")
+//    public String deleteProductFromCart(@RequestParam UUID userId, @RequestParam UUID productId){
+//        //assuming each user has one cart
+//        Cart cart = cartService.getCartByUserId(userId);
+//
+//        if (cart == null || cart.getProducts().isEmpty()) {
+//            return "Cart is empty";
+//        }
+//
+//        Product product = productService.getProductById(productId);
+//        if (product == null) {
+//            return "Product with ID " + productId + " not found.";
+//        }
+//
+//        StringBuilder response = new StringBuilder("\nCart before deleting the product:\n" + cart);
+//        cartService.deleteProductFromCart(cart.getId(), product);
+//        cart = cartService.getCartByUserId(userId); //get the cart after adding the product
+//        response.append("\nCart after deleting the product:\n" + cart);
+//
+//        return "Product deleted from cart";
+//
+//    }
+
+    @PutMapping("/addProductToCart")
+    public String addProductToCart(@RequestParam UUID userId, @RequestParam UUID productId) {
+        try {
+            Cart cart = cartService.getCartByUserId(userId);
+
+            if (cart == null) {
+                cart = new Cart(userId);
+                cartService.addCart(cart);
+            }
+
+            Product product = productService.getProductById(productId);
+            if (product == null) {
+                return "Product with ID " + productId + " not found.";
+            }
+
+            cartService.addProductToCart(cart.getId(), product);
+            return "Product added to cart";
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return  e.getMessage();
+        }
+    }
+
+    @PutMapping("/deleteProductFromCart")
+    public String deleteProductFromCart(@RequestParam UUID userId, @RequestParam UUID productId) {
+        try {
+            Cart cart = cartService.getCartByUserId(userId);
+
+            if (cart == null || cart.getProducts().isEmpty()) {
+                return "Cart is empty";
+            }
+
+            Product product = productService.getProductById(productId);
+            if (product == null) {
+                return "Product with ID " + productId + " not found.";
+            }
+
+            cartService.deleteProductFromCart(cart.getId(), product);
+            return "Product deleted from cart";
         } catch (IllegalArgumentException e) {
-            return "Invalid user ID: " + e.getMessage();
+            return "Invalid input: " + e.getMessage();
         } catch (NoSuchElementException e) {
             return e.getMessage();
         }
     }
-
-    //user, product and cart (mesh mawgodeen fe userservice)
-    @PutMapping("/addProductToCart")
-    public String addProductToCart(@RequestParam UUID userId, @RequestParam UUID productId){
-
-        //assuming each user has one cart
-        Cart cart = cartService.getCartByUserId(userId);
-
-        if (cart == null) {
-            cart = new Cart(userId);
-            cartService.addCart(cart);
-        }
-
-        Product product = productService.getProductById(productId);
-        if (product == null) {
-            return "Product with ID " + productId + " not found.";
-        }
-
-        cartService.addProductToCart(cart.getId(), product);
-        cart = cartService.getCartByUserId(userId); //get the cart after adding the product
-        return "Product added to cart";
-    }
-
-
-    @PutMapping("/deleteProductFromCart")
-    public String deleteProductFromCart(@RequestParam UUID userId, @RequestParam UUID productId){
-        //assuming each user has one cart
-        Cart cart = cartService.getCartByUserId(userId);
-
-        if (cart == null || cart.getProducts().isEmpty()) {
-            return "Cart is empty";
-        }
-
-        Product product = productService.getProductById(productId);
-        if (product == null) {
-            return "Product with ID " + productId + " not found.";
-        }
-
-        StringBuilder response = new StringBuilder("\nCart before deleting the product:\n" + cart);
-        cartService.deleteProductFromCart(cart.getId(), product);
-        cart = cartService.getCartByUserId(userId); //get the cart after adding the product
-        response.append("\nCart after deleting the product:\n" + cart);
-
-        return "Product deleted from cart";
-
-    }
-
 
 }
