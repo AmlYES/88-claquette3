@@ -14,11 +14,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
-public class UserController {
+ public class UserController {
 
     CartService cartService;
     UserService userService;
@@ -32,8 +33,12 @@ public class UserController {
     }
     //user dependent only
     @PostMapping("/")
-    public User addUser(@RequestBody User user){
-        return userService.addUser(user);
+    public User addUser(@RequestBody User user) {
+        try {
+            return userService.addUser(user);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid user data: " + e.getMessage());
+        }
     }
 
     @GetMapping("/")
@@ -42,73 +47,78 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-        public User getUserById(@PathVariable UUID userId){
-        return userService.getUserById(userId);
+    public User getUserById(@PathVariable UUID userId) {
+        try {
+            return userService.getUserById(userId);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid user ID: " + e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("User not found: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/delete/{userId}")
-    public String deleteUserById(@PathVariable UUID userId){
-        User user = userService.getUserById(userId); // Fetch deleted user
-
-        if (user == null) {
-            return "User not found";
+    public String deleteUserById(@PathVariable UUID userId) {
+        try {
+            userService.getUserById(userId); // Ensure user exists before deleting
+            userService.deleteUserById(userId);
+            return "User deleted successfully";
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid user ID: " + e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException( e.getMessage());
         }
-
-        userService.deleteUserById(userId);
-
-        return "User deleted successfully";
     }
 
     //user and order
     @GetMapping("/{userId}/orders")
-    public List<Order> getOrdersByUserId(@PathVariable UUID userId){
-
-        User user = userService.getUserById(userId);
-
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with ID " + userId + " not found.");
+    public List<Order> getOrdersByUserId(@PathVariable UUID userId) {
+        try {
+            return userService.getOrdersByUserId(userId);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid user ID: " + e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("User not found: " + e.getMessage());
         }
-        return userService.getOrdersByUserId(userId);
     }
 
     @PostMapping("/{userId}/checkout")
-    public String addOrderToUser(@PathVariable UUID userId){
-        User user = userService.getUserById(userId); // Fetch the user
-        if (user == null) {
-            return "User with ID " + userId + " not found.";
+    public String addOrderToUser(@PathVariable UUID userId) {
+        try {
+            userService.addOrderToUser(userId);
+            return "Order added successfully";
+        } catch (IllegalArgumentException e) {
+            return "Invalid user ID: " + e.getMessage();
+        } catch (NoSuchElementException e) {
+            return e.getMessage();
+        } catch (IllegalStateException e) {
+            return "Cannot place order: " + e.getMessage();
         }
-        userService.addOrderToUser(userId);
-        return "Order added successfully";
     }
 
     @PostMapping("/{userId}/removeOrder")
-    public String removeOrderFromUser(@PathVariable UUID userId, @RequestParam UUID orderId){
-
-        User user = userService.getUserById(userId);
-        if (user == null) {
-            return "User with ID " + userId + " not found.";
+    public String removeOrderFromUser(@PathVariable UUID userId, @RequestParam UUID orderId) {
+        try {
+            userService.removeOrderFromUser(userId, orderId);
+            return "Order removed successfully";
+        } catch (IllegalArgumentException e) {
+            return "Invalid input: " + e.getMessage();
+        } catch (NoSuchElementException e) {
+            return e.getMessage();
         }
-        List<Order> orders = userService.getOrdersByUserId(userId);
-        // Check if the order exists
-        boolean orderExists = orders.stream().anyMatch(order -> order.getId().equals(orderId));
-
-        if (!orderExists) {
-            return "Order with ID " + orderId + " not found for user " + userId;
-        }
-
-        userService.removeOrderFromUser(userId, orderId);
-        return "Order removed successfully";
     }
 
     //user and cart
     @DeleteMapping("/{userId}/emptyCart")
-    public String emptyCart(@PathVariable UUID userId){
-        User user = userService.getUserById(userId);
-        if (user == null) {
-            return "User not found";
+    public String emptyCart(@PathVariable UUID userId) {
+        try {
+            userService.emptyCart(userId);
+            return "Cart emptied successfully";
+        } catch (IllegalArgumentException e) {
+            return "Invalid user ID: " + e.getMessage();
+        } catch (NoSuchElementException e) {
+            return e.getMessage();
         }
-        userService.emptyCart(userId);
-        return "Cart emptied successfully";
     }
 
     //user, product and cart (mesh mawgodeen fe userservice)

@@ -48,3 +48,8 @@ public class CartService extends MainService<Cart>{
 //The Dependency Injection Variables
 //The Constructor with the required variables mapping the Dependency Injection.
 }
+// add cart 3
+// get carts 3
+//get by id 1
+// get by user id 3
+// add product 2
