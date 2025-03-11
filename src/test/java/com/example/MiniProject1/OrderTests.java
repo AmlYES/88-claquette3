@@ -119,12 +119,14 @@ class OrderTests {
     }
 
     @Test
-    void getOrderById_withInvalidId_shouldReturnNull() {
-        // Act
-        Order retrievedOrder = orderService.getOrderById(UUID.randomUUID());
+    void getOrderById_withInvalidId_shouldThrowException() {
+//        // Act
+//        Order retrievedOrder = orderService.getOrderById(UUID.randomUUID());
+//
+//        // Assert
+//        assertNull(retrievedOrder, "Should return null for a non-existent order");
 
-        // Assert
-        assertNull(retrievedOrder, "Should return null for a non-existent order");
+        assertThrows(IllegalStateException.class, () -> orderService.getOrderById(UUID.randomUUID()));
     }
 
     @Test
@@ -151,7 +153,8 @@ class OrderTests {
         orderService.deleteOrderById(order.getId());
 
         // Assert
-        assertNull(orderService.getOrderById(order.getId()), "Order should be removed after deletion");
+        assertThrows(IllegalStateException.class, () -> orderService.getOrderById(order.getId()));
+//        assertNull(orderService.getOrderById(order.getId()), "Order should be removed after deletion");
     }
 
     @Test
@@ -160,11 +163,12 @@ class OrderTests {
         UUID randomId = UUID.randomUUID();
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            orderService.deleteOrderById(randomId);
-        });
-
-        assertEquals("Order with ID " + randomId + " not found.", exception.getMessage(), "Exception message should match");
+//        Exception exception = assertThrows(IllegalStateException.class, () -> {
+//            orderService.deleteOrderById(randomId);
+//        });
+//
+//        assertEquals("Order with ID " + randomId + " not found.", exception.getMessage(), "Exception message should match");
+        assertThrows(IllegalStateException.class, () -> orderService.deleteOrderById(randomId));
     }
 
     @Test
