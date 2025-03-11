@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+@SpringBootTest
 
 @SpringBootTest
 public class CartTests {
