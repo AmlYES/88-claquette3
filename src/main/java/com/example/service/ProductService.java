@@ -8,17 +8,28 @@ import com.example.service.MainService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @SuppressWarnings("rawtypes")
 public class ProductService extends MainService<Product> {
-    @Autowired
+
     ProductRepository productRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        super();
+        this.productRepository = productRepository;
+    }
 
     //----- Required Methods -----//
 
-    public Product addProduct(Product product) {return productRepository.addProduct(product);}
+    public Product addProduct(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product not found");
+        }
+        return productRepository.addProduct(product);}
 
     public ArrayList<Product> getProducts() {
         return productRepository.getProducts();
@@ -29,14 +40,37 @@ public class ProductService extends MainService<Product> {
     }
 
     public Product updateProduct(UUID productId, String newName, double newPrice) {
-        return productRepository.updateProduct(productId, newName, newPrice);}
+        Product product = productRepository.getProductById(productId);
 
-    public void applyDiscount(double discount, ArrayList<UUID> productIds) {
-        productRepository.applyDiscount(discount, productIds);
+        if (product == null) {
+            throw new IllegalArgumentException("Product not found");
+        }
 
+        return productRepository.updateProduct(productId, newName, newPrice);
     }
 
+
+    public void applyDiscount(double discount, ArrayList<UUID> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            throw new IllegalArgumentException("Product IDs list cannot be null or empty");
+        }
+
+        for (UUID productId : productIds) {
+            if (productRepository.getProductById(productId) == null) {
+                throw new IllegalArgumentException("Product with ID " + productId + " does not exist");
+            }
+        }
+
+        productRepository.applyDiscount(discount, productIds);
+    }
+
+
     public void deleteProductById(UUID productId) {
+        Product product = productRepository.getProductById(productId);
+
+        if (product == null) {
+            throw new IllegalArgumentException("Product not found");
+        }
         productRepository.deleteProductById(productId);
     }
 
