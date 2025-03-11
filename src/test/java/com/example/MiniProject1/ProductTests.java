@@ -120,13 +120,12 @@ class ProductTests {
 
     @Test
     void getProductById_shouldReturnNullForNonExistentProduct() {
-        Product retrievedProduct = productService.getProductById(UUID.randomUUID());
-        assertNull(retrievedProduct, "Retrieving a non-existent product should return null");
+        assertThrows(NoSuchElementException.class, () -> productService.getProductById(UUID.randomUUID()), "Should return null for non-existent ID");
     }
 
     @Test
     void getProductById_shouldFailForInvalidId() {
-        assertNull(productService.getProductById(UUID.randomUUID()), "Should return null for non-existent ID");
+        assertThrows(IllegalArgumentException.class, () ->productService.getProductById(null), "Should return null for non-existent ID");
     }
 
 
@@ -152,11 +151,13 @@ class ProductTests {
 
     @Test
     void updateProduct_shouldFailForNonExistentProduct() {
-        UUID nonExistentId = UUID.randomUUID(); // Generate a random UUID that doesn't exist
-        assertThrows(IllegalArgumentException.class, () ->
+        UUID nonExistentId = UUID.randomUUID();
+        assertThrows(NoSuchElementException.class, () ->
                         productService.updateProduct(nonExistentId, "Ghost Product", 99.99),
-                "Updating non-existent product should throw an exception");
+                "Updating non-existent product should throw NoSuchElementException"
+        );
     }
+
 
     // Test for applying a discount
     @Test
@@ -186,7 +187,7 @@ class ProductTests {
         ArrayList<UUID> productIds = new ArrayList<>();
         productIds.add(invalidId1);
         productIds.add(invalidId2);
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NoSuchElementException.class, () ->
                         productService.applyDiscount(10.0 , productIds),
                 " Discounting non-existent product should throw an exception");
     }
@@ -218,10 +219,12 @@ class ProductTests {
 
     @Test
     void deleteProductById_shouldFailForNonExistentId() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NoSuchElementException.class, () ->
                         productService.deleteProductById(UUID.randomUUID()),
-                "Deleting non-existent product should throw exception");
+                "Deleting non-existent product should throw NoSuchElementException"
+        );
     }
+
 
     @Test
     void deleteProductById_shoulddecreaseProductListSize() {
