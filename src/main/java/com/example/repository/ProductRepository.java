@@ -61,7 +61,7 @@ public class ProductRepository extends MainRepository<Product> {
         ArrayList<Product> products = findAll();
         for(Product product: products){
             if(productIds.contains(product.getId())){
-                double discountedPrice = product.getPrice()- ( ( discount/100) * product.getPrice());
+                double discountedPrice = product.getPrice() - ( ( discount/100) * product.getPrice());
                 product.setPrice(discountedPrice);
             }
         }

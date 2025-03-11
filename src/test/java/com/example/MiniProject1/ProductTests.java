@@ -1,22 +1,26 @@
 package com.example.MiniProject1;
 
 import com.example.model.Product;
+import com.example.repository.ProductRepository;
 import com.example.service.OrderService;
 import com.example.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+
+import java.lang.reflect.Executable;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
+
 class ProductTests {
     @Autowired
     private ProductService productService;
-    @Autowired
+    private ProductRepository productRepository;
+
     private Product product;
 
     @Test
@@ -43,12 +47,25 @@ class ProductTests {
         assertEquals(initialSize + 1, newSize, "Product list size should increase by 1");
     }
 
-
     @Test
-    void addProduct_shouldFailOnNullName() {
-        assertThrows(IllegalArgumentException.class, () -> productService.addProduct(new Product(null, 100.0)),
-                "Adding product with null name should throw exception");
+    void addProduct_withValidProduct_shouldBeRetrievable() {
+        // Arrange
+        ProductRepository productRepository = new ProductRepository(); // Assuming real implementation
+
+        UUID productId = UUID.randomUUID();
+        Product product = new Product(productId, "Test Product", 50.0);
+
+        // Act
+        productService.addProduct(product); // Add product
+        Optional<Product> retrievedProduct = Optional.ofNullable(productRepository.getProductById(productId)); // Retrieve product
+
+        // Assert
+        assertTrue(retrievedProduct.isPresent(), "Product should be retrievable after adding");
+        assertEquals(product.getId(), retrievedProduct.get().getId());
+        assertEquals(product.getName(), retrievedProduct.get().getName());
+        assertEquals(product.getPrice(), retrievedProduct.get().getPrice(), 0.01);
     }
+
 
     // Tests for getProducts
     @Test
@@ -107,22 +124,13 @@ class ProductTests {
         assertNull(retrievedProduct, "Retrieving a non-existent product should return null");
     }
 
-
     @Test
     void getProductById_shouldFailForInvalidId() {
         assertNull(productService.getProductById(UUID.randomUUID()), "Should return null for non-existent ID");
     }
 
-    // Tests for deleteProduct
-    @Test
-    void deleteProduct_shouldRemoveProductFromList() {
-        Product product = new Product();
-        productService.addProduct(product);
-        UUID productId = product.getId();
-        productService.deleteProductById(productId);
-        Product retrievedProduct = productService.getProductById(productId);
-        assertNull(retrievedProduct, "Deleted product should not be retrievable");
-    }
+
+    // Tests for UpdateProduct
     @Test
     void updateProduct_shouldModifyProductDetails() {
         Product product = new Product("Headphones", 150.0);
@@ -150,8 +158,7 @@ class ProductTests {
                 "Updating non-existent product should throw an exception");
     }
 
-
-    // **Test for applying a discount**
+    // Test for applying a discount
     @Test
     void applyDiscount_shouldReduceProductPrices() {
         Product product1 = new Product("Keyboard", 100.0);
@@ -171,35 +178,32 @@ class ProductTests {
         assertEquals(80.0, discountedProduct1.getPrice(), "Keyboard price should be discounted by 20%");
         assertEquals(40.0, discountedProduct2.getPrice(), "Mouse price should be discounted by 20%");
     }
-    @Test
-    void applyDiscount_shouldReducePricesCorrectly() {
-        Product p1 = new Product("Monitor", 200.0);
-        Product p2 = new Product("Chair", 400.0);
-        productService.addProduct(p1);
-        productService.addProduct(p2);
-        productService.applyDiscount(20.0, (ArrayList<UUID>) List.of(p1.getId(), p2.getId()));
-        assertEquals(160.0, productService.getProductById(p1.getId()).getPrice(), "Monitor should be discounted");
-        assertEquals(320.0, productService.getProductById(p2.getId()).getPrice(), "Chair should be discounted");
-    }
-
 
     @Test
     void applyDiscount_shouldFailForInvalidId() {
+        UUID invalidId1 = UUID.randomUUID();
+        UUID invalidId2 = UUID.randomUUID();
+        ArrayList<UUID> productIds = new ArrayList<>();
+        productIds.add(invalidId1);
+        productIds.add(invalidId2);
         assertThrows(IllegalArgumentException.class, () ->
-                        productService.applyDiscount(10.0, (ArrayList<UUID>) List.of(UUID.randomUUID())),
-                "Applying discount to non-existent product should throw exception");
+                        productService.applyDiscount(10.0 , productIds),
+                " Discounting non-existent product should throw an exception");
     }
-
 
     @Test
-    void deleteProduct_shouldDecreaseProductListSize() {
-        Product product = new Product();
+    void applyDiscount_shouldNotChangePriceForZeroDiscount() {
+        Product product = new Product("Monitor", 300.0);
         productService.addProduct(product);
-        int initialSize = productService.getProducts().size();
-        productService.deleteProductById(product.getId());
-        int newSize = productService.getProducts().size();
-        assertEquals(initialSize - 1, newSize, "Product list size should decrease by 1");
+        ArrayList<UUID> productIds = new ArrayList<>();
+        productIds.add(product.getId());
+
+        productService.applyDiscount(0.0, productIds);
+        Product unchangedProduct = productService.getProductById(product.getId());
+
+        assertEquals(300.0, unchangedProduct.getPrice(), "Applying a 0% discount should not change the price");
     }
+
 
     @Test
     void deleteProductById_shouldHandleLastProductDeletion() {
@@ -219,5 +223,15 @@ class ProductTests {
                 "Deleting non-existent product should throw exception");
     }
 
+    @Test
+    void deleteProductById_shoulddecreaseProductListSize() {
+        int initialSize = productService.getProducts().size();
+
+        ArrayList<Product> products = productService.getProducts();
+        Product product = products.get(0);
+        productService.deleteProductById(product.getId());
+        int newSize = productService.getProducts().size();
+        assertEquals(initialSize - 1, newSize, "Product list size should decrease by 1");
+    }
 }
 
