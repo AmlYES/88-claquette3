@@ -14,8 +14,11 @@
 //import java.util.UUID;
 //
 //import static org.junit.jupiter.api.Assertions.*;
+//
+//
 //@SpringBootTest
 //public class CartTests {
+//
 //    @Autowired
 //    private CartService cartService;
 //
@@ -64,7 +67,7 @@
 //        assertEquals(length + 1, newSize, "Cart list size should increase by 1");
 //    }
 //
-//    // Tests for getOrders()
+//    // Tests for getCarts()
 //    @Test
 //    void getCarts_afterAddingCart_shouldNotBeEmpty(){
 //        // Arrange
@@ -79,6 +82,7 @@
 //       assertEquals(cartsEmpty,carts.isEmpty(),"Cart list should not be empty");
 //    }
 //
+//    //Test for getCarts
 //    @Test
 //    void getCarts_shouldReturnCorrectSize() {
 //        // Arrange
@@ -93,6 +97,7 @@
 //        assertEquals(initialSize + 1, newSize, "Carts list size should increase by 1");
 //    }
 //
+//    //Test for getCarts
 //    @Test
 //    void getCarts_shouldContainAddedCart() {
 //        // Arrange
@@ -107,8 +112,9 @@
 //        assertTrue(exists, "Cart list should contain the added order");
 //    }
 //
+//    //Test for getCartById
 //    @Test
-//    void getCart_shouldRetrieveCorrectCartById(){
+//    void getCartByID_shouldRetrieveCorrectCartById(){
 //
 //        // Arrange
 //        Cart cart= new Cart(UUID.randomUUID());
@@ -122,6 +128,36 @@
 //        assertEquals(cartID,retrievedCart.getId(),"Cart ID should match");
 //    }
 //
+//    @Test
+//    void getCartByID_shouldHaveCorrectUserId(){
+//
+//        // Arrange
+//        UUID userID= UUID.randomUUID();
+//        Cart cart= new Cart(userID);
+//        cartService.addCart(cart);
+//
+//        // Act
+//        UUID cartID= cart.getId();
+//        Cart retrievedCart = cartService.getCartById(cartID);
+//
+//        // Assert
+//        assertEquals(userID,retrievedCart.getUserId(),"Cart fetched by ID should have matching userID");
+//    }
+//
+//    @Test
+//    void getCartByID_shouldReturnNullForInvalidCartId() {
+//        // Arrange (random cart that doesn't exist)
+//        UUID invalidCartID = UUID.randomUUID();
+//
+//        // Act
+//        Cart retrievedCart = cartService.getCartById(invalidCartID);
+//
+//        // Assert
+//        assertNull(retrievedCart, "Should return null for an invalid cart ID");
+//    }
+//
+//
+//    //Test for getCartByUserId
 //    @Test
 //    void getUserCart_shouldRetrieveCorrectCartID(){
 //
@@ -138,6 +174,7 @@
 //        assertEquals(cartID,retrievedCart.getId(),"Cart ID should match");
 //    }
 //
+//    //Test for getCartByUserId
 //    @Test
 //    void getUserCart_shouldRetrieveCorrectCartUserID(){
 //
@@ -154,6 +191,7 @@
 //        assertEquals(userID,retrievedCart.getUserId(),"Cart UserID should match");
 //    }
 //
+//    //Test for getCartByUserId
 //    @Test
 //    void getUserCart_shouldRetrieveCorrectCartProducts(){
 //
@@ -210,6 +248,25 @@
 //        // Assert
 //        assertEquals(size+1,sizeRetrieved,"Products list size should be incremented by one.");
 //    }
+//
+//    @Test
+//    void addProductToCart_shouldNotAddNullProduct() {
+//        // Arrange
+//        Product product1 = new Product("pen", 10.0);
+//        Cart cart = new Cart(UUID.randomUUID());
+//        cartService.addCart(cart);
+//
+//        // Act
+//        cartService.addProductToCart(cart.getId(), product1);
+//        cartService.addProductToCart(cart.getId(), null); // Attempt to add a null product
+//        Cart retrievedCart = cartService.getCartById(cart.getId());
+//        List<Product> productsRetrieved = retrievedCart.getProducts();
+//
+//        // Assert
+//        assertEquals(1, productsRetrieved.size(), "Null products should not be added to the cart.");
+//        assertTrue(productsRetrieved.contains(product1), "The cart should only contain valid products.");
+//    }
+//
 //
 //
 //

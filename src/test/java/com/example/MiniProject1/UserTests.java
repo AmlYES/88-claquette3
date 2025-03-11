@@ -323,14 +323,14 @@ class UserTests {
                         .anyMatch(o -> o.getId().equals(order.getId())),
                 "Order should no longer be in the user's order list");    }
 
-@Test
-void removeOrderFromUser_withNullUserId_shouldThrowIllegalArgumentException() {
-    UUID orderId = UUID.randomUUID();
+    @Test
+    void removeOrderFromUser_withNullUserId_shouldThrowIllegalArgumentException() {
+        UUID orderId = UUID.randomUUID();
 
-    // Act & Assert
-    assertThrows(IllegalArgumentException.class, () -> userService.removeOrderFromUser(null, orderId),
-            "Should throw IllegalArgumentException when userId is null");
-}
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> userService.removeOrderFromUser(null, orderId),
+                "Should throw IllegalArgumentException when userId is null");
+    }
 
     @Test
     void removeOrderFromUser_withNullOrderId_shouldThrowIllegalArgumentException() {
