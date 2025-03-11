@@ -57,7 +57,6 @@ public class CartService extends MainService<Cart>{
             throw new IllegalStateException("Product already exists in cart");
         }
          cartRepository.addProductToCart(cartId,product);
-        System.out.println(" cart products" + cartRepository.getCartById(cartId).toString());
 
     }
     public void deleteProductFromCart(UUID cartId, Product product) {
@@ -89,8 +88,8 @@ public class CartService extends MainService<Cart>{
             throw new IllegalArgumentException("User ID cannot be null");
         }
         Cart cart = getCartByUserId(userId);
-        if (cart == null || cart.getProducts().isEmpty()) {
-            throw new IllegalStateException("Cart is already empty or does not exist");
+        if (cart == null ) {
+            throw new IllegalStateException("Cart does not exist");
         }
         cartRepository.emptyCart(userId);
     }

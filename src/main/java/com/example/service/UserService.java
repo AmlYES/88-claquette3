@@ -40,7 +40,6 @@ public class UserService extends MainService<User> {
         User savedUser = userRepository.addUser(user);
         Cart newCart = new Cart(savedUser.getId());
         cartService.addCart(newCart);
-        System.out.println("Added cart " + savedUser.getId() + " to the cart" + newCart.getId());
         return savedUser;
     }
 
@@ -83,7 +82,6 @@ public class UserService extends MainService<User> {
             throw new IllegalStateException("no cart");
         }
         if ( cart.getProducts().isEmpty()) {
-            System.out.println(" really no cart");
             throw new IllegalStateException("Cart is empty. Cannot place order.");
         }
 
@@ -91,15 +89,15 @@ public class UserService extends MainService<User> {
 
         Order newOrder = new Order(UUID.randomUUID(), userId, totalPrice, new ArrayList<>(cart.getProducts()));
 
-        System.out.println("New Order Created: " + newOrder);
+        //System.out.println("New Order Created: " + newOrder);
 
         orderService.addOrder(newOrder);
 
-        System.out.println("Order should be saved now. Checking userRepository...");
+        //System.out.println("Order should be saved now. Checking userRepository...");
 
         userRepository.addOrderToUser(userId, newOrder);
 
-        System.out.println("Order added to user successfully!");
+        //System.out.println("Order added to user successfully!");
 
         emptyCart(userId);
     }
@@ -115,6 +113,7 @@ public class UserService extends MainService<User> {
 
         cartService.emptyCart(userId);
     }
+
 
     public void removeOrderFromUser(UUID userId, UUID orderId) {
         if (userId == null || orderId == null) {
