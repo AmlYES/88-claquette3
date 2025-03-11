@@ -25,28 +25,51 @@ public class OrderController {
     //order dependent only
     @PostMapping("/")
     public void addOrder(@RequestBody Order order){
-        orderService.addOrder(order);
+        try{
+            orderService.addOrder(order);
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     @GetMapping("/{orderId}")
     public Order getOrderById(@PathVariable UUID orderId){
-        return orderService.getOrderById(orderId);
+        try{
+            return orderService.getOrderById(orderId);
+
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 
     @GetMapping("/")
     public ArrayList<Order> getOrders(){
-        return orderService.getOrders();
+        try{
+            return orderService.getOrders();
+
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 
     @DeleteMapping("/delete/{orderId}")
     public String deleteOrderById(@PathVariable UUID orderId){
 
-        Order order = orderService.getOrderById(orderId);
-        if(order == null){
-            return "Order not found";
-        }
+        try{
+
+//        Order order = orderService.getOrderById(orderId);
+//        if(order == null){
+//            return "Order not found";
+//        }
         orderService.deleteOrderById(orderId);
         return "Order deleted successfully";
+        }
+        catch(Exception e){
+            return e.getMessage();
+        }
     }
 
 
