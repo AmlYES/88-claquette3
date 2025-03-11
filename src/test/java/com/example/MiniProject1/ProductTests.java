@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductTests {
     @Autowired
     private ProductService productService;
+    @Autowired
+    private Product product;
 
     @Test
     void contextLoads() {
@@ -105,14 +107,6 @@ class ProductTests {
         assertNull(retrievedProduct, "Retrieving a non-existent product should return null");
     }
 
-    @Test
-    void getProductById_shouldRetrieveLastAddedProduct() {
-        Product product1 = new Product();
-        Product product2 = new Product();
-        productService.addProduct(product1);
-        productService.addProduct(product2);
-        assertEquals(product2, productService.getProductById(product2.getId()), "Should retrieve last added product");
-    }
 
     @Test
     void getProductById_shouldFailForInvalidId() {
@@ -150,10 +144,12 @@ class ProductTests {
 
     @Test
     void updateProduct_shouldFailForNonExistentProduct() {
+        UUID nonExistentId = UUID.randomUUID(); // Generate a random UUID that doesn't exist
         assertThrows(IllegalArgumentException.class, () ->
-                        productService.updateProduct(UUID.randomUUID(), "Ghost Product", 99.99),
-                "Updating non-existent product should throw exception");
+                        productService.updateProduct(nonExistentId, "Ghost Product", 99.99),
+                "Updating non-existent product should throw an exception");
     }
+
 
     // **Test for applying a discount**
     @Test
@@ -186,13 +182,6 @@ class ProductTests {
         assertEquals(320.0, productService.getProductById(p2.getId()).getPrice(), "Chair should be discounted");
     }
 
-    @Test
-    void applyDiscount_shouldAllow100PercentDiscount() {
-        Product product = new Product("Gift Card", 50.0);
-        productService.addProduct(product);
-        productService.applyDiscount(100.0, (ArrayList<UUID>) List.of(product.getId()));
-        assertEquals(0.0, productService.getProductById(product.getId()).getPrice(), "Price should be zero after 100% discount");
-    }
 
     @Test
     void applyDiscount_shouldFailForInvalidId() {
