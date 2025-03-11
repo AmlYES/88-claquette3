@@ -23,9 +23,6 @@ public class CartRepository extends MainRepository<Cart> {
     }
 
     public Cart addCart(Cart cart){
-        if(cart==null){
-            return null;
-        }
         if(cart.getId()==null) {
            cart.setId(UUID.randomUUID());
         }
@@ -57,15 +54,12 @@ public class CartRepository extends MainRepository<Cart> {
         }
         return null;
     }
-
-    public void addProductToCart(UUID cartId, Product product) {
-        ArrayList<Cart> carts = findAll();
-        if(product==null){
-            return;
-        }
-        for (Cart cart : carts) {
-            if (cart.getId().equals(cartId)) {
-                List<Product> products = cart.getProducts();
+    public void addProductToCart(UUID cartId, Product product){
+        Cart c = getCartById(cartId);
+        ArrayList<Cart> carts= findAll();
+        for(Cart cart: carts){
+            if(cart.getId().equals(cartId)){
+                List<Product> products= cart.getProducts();
                 products.add(product);
                 cart.setProducts(products);
 

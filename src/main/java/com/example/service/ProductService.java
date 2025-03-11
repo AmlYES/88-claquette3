@@ -60,6 +60,11 @@ public class ProductService extends MainService<Product> {
         if (productIds == null || productIds.isEmpty()) {
             throw new IllegalArgumentException("Product ID list cannot be null or empty");
         }
+        for (UUID productId : productIds) {
+            if (productRepository.getProductById(productId) == null) {
+                throw new NoSuchElementException("Product not found: " + productId);
+            }
+        }
 
         productRepository.applyDiscount(discount, productIds);
     }
