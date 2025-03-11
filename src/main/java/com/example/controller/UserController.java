@@ -73,6 +73,10 @@ public class UserController {
 
     @PostMapping("/{userId}/checkout")
     public String addOrderToUser(@PathVariable UUID userId){
+
+
+        // CATCHHH
+
         User user = userService.getUserById(userId); // Fetch the user
         if (user == null) {
             return "User with ID " + userId + " not found.";

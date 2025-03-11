@@ -28,46 +28,67 @@ public class CartController {
     //cart dependent only
     @PostMapping("/")
     public Cart addCart(@RequestBody Cart cart){
-        return cartService.addCart(cart);
+        try{
+            return cartService.addCart(cart);
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 
     @GetMapping("/")
     public ArrayList<Cart> getCarts(){
+
         return cartService.getCarts();
     }
 
     @GetMapping("/{cartId}")
     public Cart getCartById(@PathVariable UUID cartId){
-        return cartService.getCartById(cartId);
+        try{
+            return cartService.getCartById(cartId);
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 
     @DeleteMapping("/delete/{cartId}")
     public String deleteCartById(@PathVariable UUID cartId){
-        Cart cart = cartService.getCartById(cartId);
+        try {
+//            Cart cart = cartService.getCartById(cartId);
+//
+//            if(cart == null){
+//                return "Cart with ID " + cartId + " was not found";
+//            }
 
-        if(cart == null){
-            return "Cart with ID " + cartId + " was not found";
+            cartService.deleteCartById(cartId);
+
+            return "Cart deleted successfully";
+        } catch (Exception e) {
+            return e.getMessage();
         }
-
-        cartService.deleteCartById(cartId);
-
-        return "Cart deleted successfully";
     }
 
     //cart and product dependent
     @PutMapping("/addProduct/{cartId}")
     public String addProductToCart(@PathVariable UUID cartId, @RequestBody Product product){
-        Cart cart = cartService.getCartById(cartId);
 
-        if(cart == null){
-            return "Cart with ID " + cartId + " was not found";
+        try{
+//        Cart cart = cartService.getCartById(cartId);
+//
+//        if(cart == null){
+//            return "Cart with ID " + cartId + " was not found";
+//        }
+//        StringBuilder response = new StringBuilder("\nCart before adding the product:\n" + cart);
+            cartService.addProductToCart(cartId,product);
+//        cart = cartService.getCartById(cartId);
+//        response.append("\nCart after adding the product:\n" + cart);
+
+        return "Product: " + product + " was added successfully";
         }
-        StringBuilder response = new StringBuilder("\nCart before adding the product:\n" + cart);
-        cartService.addProductToCart(cartId,product);
-        cart = cartService.getCartById(cartId);
-        response.append("\nCart after adding the product:\n" + cart);
-
-        return "Product: " + product + " was added successfully \n" + response;
+        catch(Exception e){
+            return e.getMessage();
+        }
     }
 
 }

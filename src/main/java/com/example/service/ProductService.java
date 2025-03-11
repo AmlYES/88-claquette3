@@ -8,6 +8,7 @@ import com.example.service.MainService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -18,25 +19,61 @@ public class ProductService extends MainService<Product> {
 
     //----- Required Methods -----//
 
-    public Product addProduct(Product product) {return productRepository.addProduct(product);}
+    public Product addProduct(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+        return productRepository.addProduct(product);
+    }
 
     public ArrayList<Product> getProducts() {
         return productRepository.getProducts();
     }
 
     public Product getProductById(UUID productId) {
-        return productRepository.getProductById(productId);
+        if (productId == null) {
+            throw new IllegalArgumentException("Product ID cannot be null");
+        }
+
+        Product product = productRepository.getProductById(productId);
+        if (product == null) {
+            throw new NoSuchElementException("Product not found");
+        }
+        return product;
     }
 
     public Product updateProduct(UUID productId, String newName, double newPrice) {
-        return productRepository.updateProduct(productId, newName, newPrice);}
+        if (productId == null) {
+            throw new IllegalArgumentException("Product ID cannot be null");
+        }
+
+        Product product = productRepository.getProductById(productId);
+        if (product == null) {
+            throw new NoSuchElementException("Product not found");
+        }
+
+        return productRepository.updateProduct(productId, newName, newPrice);
+    }
+
 
     public void applyDiscount(double discount, ArrayList<UUID> productIds) {
-        productRepository.applyDiscount(discount, productIds);
+        if (productIds == null || productIds.isEmpty()) {
+            throw new IllegalArgumentException("Product ID list cannot be null or empty");
+        }
 
+        productRepository.applyDiscount(discount, productIds);
     }
 
     public void deleteProductById(UUID productId) {
+        if (productId == null) {
+            throw new IllegalArgumentException("Product ID cannot be null");
+        }
+
+        Product product = productRepository.getProductById(productId);
+        if (product == null) {
+            throw new NoSuchElementException("Product not found");
+        }
+
         productRepository.deleteProductById(productId);
     }
 
