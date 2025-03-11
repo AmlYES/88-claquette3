@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
@@ -48,15 +49,22 @@ public class UserController {
 
     @DeleteMapping("/delete/{userId}")
     public String deleteUserById(@PathVariable UUID userId){
-        User user = userService.getUserById(userId); // Fetch deleted user
 
-        if (user == null) {
+        try{
+            User user = userService.getUserById(userId); // Fetch deleted user
+
+            if (user == null) {
+                return "User not found";
+            }
+
+            userService.deleteUserById(userId);
+
+            return "User deleted successfully";
+
+        }
+        catch (NoSuchElementException e){
             return "User not found";
         }
-
-        userService.deleteUserById(userId);
-
-        return "User deleted successfully";
     }
 
     //user and order
