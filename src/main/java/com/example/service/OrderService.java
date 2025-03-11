@@ -36,6 +36,7 @@ public class OrderService extends MainService<Order> {
         if (order.getUserId() == null) {
             throw new IllegalStateException("Order must have an associated user.");
         }
+
         if (orderRepository.getOrderById(order.getId()) != null) {
             throw new IllegalStateException("Order with ID " + order.getId() + " already exists.");
         }

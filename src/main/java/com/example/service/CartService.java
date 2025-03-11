@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.model.Cart;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
+import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,8 @@ import java.util.UUID;
 public class CartService extends MainService<Cart>{
     @Autowired
     CartRepository cartRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     public CartService(CartRepository cartRepository) {
         super();
@@ -23,6 +26,9 @@ public class CartService extends MainService<Cart>{
     public Cart addCart(Cart cart) {
         if (cart == null) {
             throw new IllegalArgumentException("Cart cannot be null");
+        }
+        if(getCartByUserId(cart.getUserId()) != null) {
+            throw new IllegalArgumentException("User already have a cart");
         }
         return cartRepository.addCart(cart);
     }
@@ -53,9 +59,7 @@ public class CartService extends MainService<Cart>{
         if (cart == null) {
             throw new IllegalStateException("Cart not found with ID: " + cartId);
         }
-        if (cart.getProducts().contains(product)) {
-            throw new IllegalStateException("Product already exists in cart");
-        }
+
          cartRepository.addProductToCart(cartId,product);
     }
     public void deleteProductFromCart(UUID cartId, Product product) {
@@ -66,9 +70,9 @@ public class CartService extends MainService<Cart>{
         if (cart == null) {
             throw new IllegalStateException("Cart not found with ID: " + cartId);
         }
-        if (!cart.getProducts().contains(product)) {
-            throw new IllegalStateException("Product not found in cart");
-        }
+//        if (!cart.getProducts().contains(productRepository.getProductById(product.getId()))) {
+//            throw new IllegalStateException("Product not found in cart");
+//        }
         cartRepository.deleteProductFromCart(cartId, product);
     }
     public void deleteCartById(UUID cartId) {
@@ -87,8 +91,8 @@ public class CartService extends MainService<Cart>{
             throw new IllegalArgumentException("User ID cannot be null");
         }
         Cart cart = getCartByUserId(userId);
-        if (cart == null || cart.getProducts().isEmpty()) {
-            throw new IllegalStateException("Cart is already empty or does not exist");
+        if (cart == null) {
+            throw new IllegalStateException("Cart does not exist");
         }
         cartRepository.emptyCart(userId);
     }

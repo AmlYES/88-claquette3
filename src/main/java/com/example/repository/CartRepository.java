@@ -68,10 +68,11 @@ public class CartRepository extends MainRepository<Cart> {
                 List<Product> products = cart.getProducts();
                 products.add(product);
                 cart.setProducts(products);
-                save(cart);
+
                 break;
             }
         }
+        saveAll(carts);
     }
 
 
